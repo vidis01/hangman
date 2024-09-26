@@ -17,7 +17,7 @@ namespace Hangman.Classes
         private IWordSelector _wordSelector;
 
         private string _wordToGuess = "";
-        private char[] _wordInDashes;
+        private char[] _wordInDashes = Array.Empty<char>();
         private List<char> _guessedLetters = new();
         public List<string> _guessedWords = new();
 
@@ -52,7 +52,7 @@ namespace Hangman.Classes
             return topic;
         }
 
-        public void GameLogic()
+        private void GameLogic()
         {
             while (gameOn)
             {
@@ -129,7 +129,10 @@ namespace Hangman.Classes
                                 Console.WriteLine($"You guessed '{userInput}' letter already. \n");
                             }
                         }
-                        else Console.WriteLine($"Let's be real, {userInput} is not a letter.\n");
+                        else 
+                        { 
+                            Console.WriteLine($"Let's be real, {userInput} is not a letter.\n"); 
+                        }
                     }
                 }
                 else
