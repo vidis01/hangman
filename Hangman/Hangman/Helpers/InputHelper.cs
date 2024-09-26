@@ -30,5 +30,15 @@ namespace Hangman.Helpers
 
             return true;
         }
+
+        public static bool CheckLetters(char userInput)
+        {
+            char LetterIinAscii = char.ToUpper(userInput);
+            if (LetterIinAscii > 64 && LetterIinAscii < 91)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

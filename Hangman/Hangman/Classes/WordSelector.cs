@@ -5,30 +5,26 @@ namespace Hangman.Classes
 {
     public class WordSelector : IWordSelector
     {
+        private Random _random;
+        private Dictionary<TopicEnum, string[]> _words;
+        
+        public WordSelector(Random random)
+        {
+            _random = random;
+
+            _words = new Dictionary<TopicEnum, string[]>
+            {
+                { TopicEnum.COUNTRIES, new string[] { "Latvia", "Estonia", "Denmark", "China", "Ireland", "Thailand", "Zimbabwe", "France", "Uganda", "Poland", "Sweden" } },
+                { TopicEnum.CITIES, new string[] { "Vilnius", "Kaunas", "Venice", "Kedainiai", "Paris", "Mumbai", "Philadelphia", "Dallas", "Kolkata", "Pasvalys", "Madrid" } },
+                { TopicEnum.SEAS, new string[] { "Java", "Solomon", "White", "Sargasso", "Baltic", "Celebes", "labrador", "Norwegian", "Weddell", "Caribbean", "Greenland" } }            
+            };            
+        }
+
         public string SelectWord(TopicEnum? topic)
         {
-            Random rand = new();
+            if (topic == null) return "";
 
-            switch (topic)
-            {
-                case TopicEnum.COUNTRIES:
-                {
-                    string[] countries = { "Latvia", "Estonia", "Denmark", "China", "Ireland", "Thailand", "Zimbabwe", "France", "Uganda", "Poland", "Sweden" };
-                    return countries[rand.Next(countries.Length)].ToUpper();
-                }
-                case TopicEnum.CITIES:
-                {
-                    string[] cities = { "Vilnius", "Kaunas", "Venice", "Kedainiai", "Paris", "Mumbai", "Philadelphia", "Dallas", "Kolkata", "Pasvalys", "Madrid" };
-                    return cities[rand.Next(cities.Length)].ToUpper();
-                }
-                case TopicEnum.SEAS:
-                {
-                    string[] seas = { "Java", "Solomon", "White", "Sargasso", "Baltic", "Celebes", "labrador", "Norwegian", "Weddell", "Caribbean", "Greenland" };
-                    return seas[rand.Next(seas.Length)].ToUpper();
-                }
-                default:
-                    return "";
-            }
+            return _words[(TopicEnum)topic][_random.Next(_words[(TopicEnum)topic].Length)].ToUpper();           
         }
     }
 }

@@ -6,7 +6,6 @@ namespace Hangman.Classes
 {
     internal class Game
     {
-        bool choosingTopic = true;
         string? userInput = "";
         int attempts = 0;
         bool gameOn = true;
@@ -37,7 +36,6 @@ namespace Hangman.Classes
         private TopicEnum? ChooseTopic()
         {
             OutputHelper.PrintMainMenu();
-
             TopicEnum? topic;
 
             do
@@ -48,7 +46,6 @@ namespace Hangman.Classes
             while (!InputHelper.TryParseTopicSelection(userInput, out topic));
 
             Console.Clear();
-
             return topic;
         }
 
@@ -62,77 +59,15 @@ namespace Hangman.Classes
                 userInput = Console.ReadLine();
 
                 Console.Clear();
-                if (CheckUserInput.BasicChecks(userInput))
+                if (!string.IsNullOrEmpty(userInput))
                 {
                     if (userInput.Length > 1)
                     {
-                        if (!(userInput.Length > _wordToGuess.Length))
-                        {
-                            if (!CheckIfItsTheSameWord(userInput.ToLower()))
-                            {
-                                if (userInput.ToLower() == _wordToGuess.ToLower())
-                                {
-                                    GameWin();
-                                    gameOn = false;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Your guess was incorrect.");
-                                    attempts++;
-                                    if (attempts == MaxAttempts)
-                                    {
-                                        GameOver();
-                                        gameOn = false;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine($"You guessed that word already..");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Word you entered has more symbols than the word you trying to guess");
-                        }
+                        GuessWord(userInput);
                     }
                     else
                     {
-                        char userInputChar = char.ToLower(char.Parse(userInput));
-                        if (CheckUserInput.CheckLetters(userInputChar))
-                        {
-                            if (!CheckIfItsTheSameLetter(userInputChar))
-                            {
-                                if (GuessChecking(char.ToLower(userInput[0]), _wordToGuess))
-                                {
-                                    Console.WriteLine($"Your guess '{userInputChar}' was correct!\n");
-                                    if (!_wordInDashes.Contains('_'))
-                                    {
-                                        GameWin();
-                                        gameOn = false;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.WriteLine($"Sorry, there is no '{userInputChar}' letter in this word..\n");
-                                    attempts++;
-
-                                    if (attempts == MaxAttempts)
-                                    {
-                                        GameOver();
-                                        gameOn = false;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine($"You guessed '{userInput}' letter already. \n");
-                            }
-                        }
-                        else 
-                        { 
-                            Console.WriteLine($"Let's be real, {userInput} is not a letter.\n"); 
-                        }
+                        GuessLetter(userInput);
                     }
                 }
                 else
@@ -141,6 +76,82 @@ namespace Hangman.Classes
                 }
             }
         }
+
+        private void GuessWord(string userInput)
+        {
+            if (!(userInput.Length > _wordToGuess.Length))
+            {
+                if (!CheckIfItsTheSameWord(userInput.ToUpper()))
+                {
+                    if (userInput.ToUpper() == _wordToGuess.ToUpper())
+                    {
+                        GameWin();
+                        gameOn = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Your guess was incorrect.");
+                        attempts++;
+
+                        if (attempts == MaxAttempts)
+                        {
+                            GameOver();
+                            gameOn = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"You guessed that word already..");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Word you entered has more symbols than the word you trying to guess.");
+            }
+        }
+
+        private void GuessLetter(string userInput)
+        {
+            char userInputChar = char.ToUpper(char.Parse(userInput));
+
+            if (InputHelper.CheckLetters(userInputChar))
+            {
+                if (!CheckIfItsTheSameLetter(userInputChar))
+                {
+                    if (GuessChecking(char.ToUpper(userInput[0]), _wordToGuess))
+                    {
+                        Console.WriteLine($"Your guess '{userInputChar}' was correct!\n");
+
+                        if (!_wordInDashes.Contains('_'))
+                        {
+                            GameWin();
+                            gameOn = false;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Sorry, there is no '{userInputChar}' letter in this word..\n");
+                        attempts++;
+
+                        if (attempts == MaxAttempts)
+                        {
+                            GameOver();
+                            gameOn = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"You guessed '{userInput}' letter already. \n");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Let's be real, {userInput} is not a letter.\n");
+            }
+        }
+
         private void GameOver()
         {
             Console.Clear();
@@ -171,7 +182,8 @@ namespace Hangman.Classes
         {
             int indexCount = 0;
             bool guessWasCorrect = false;
-            foreach (var item in wordSelected.ToLower())
+
+            foreach (var item in wordSelected.ToUpper())
             {
                 if (item == userInput)
                 {
@@ -180,6 +192,7 @@ namespace Hangman.Classes
                 }
                 indexCount++;
             }
+
             return guessWasCorrect;
         }
 
@@ -188,8 +201,10 @@ namespace Hangman.Classes
             if (!_guessedLetters.Contains(userInput))
             {
                 _guessedLetters.Add(userInput);
+
                 return false;
             }
+
             return true;
         }
 
@@ -208,11 +223,13 @@ namespace Hangman.Classes
             if (_guessedLetters.Count != 0)
             {
                 Console.WriteLine("Letters that you guessed already:");
+
                 foreach (var item in _guessedLetters)
                 {
                     Console.Write($"{item}, ");
                 }
             }
+
             Console.WriteLine();
         }
 
@@ -221,6 +238,7 @@ namespace Hangman.Classes
             if (_guessedWords.Count != 0)
             {
                 Console.WriteLine("Words that you guessed already:");
+
                 foreach (var item in _guessedWords)
                 {
                     Console.Write($"{item}, ");

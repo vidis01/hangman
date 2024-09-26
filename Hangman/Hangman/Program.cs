@@ -6,7 +6,7 @@ namespace Hangman
     {
         static void Main(string[] args)
         {
-            Game game = new(new WordSelector());
+            Game game = new(new WordSelector(new Random()));
             game.Play();
         }
     }
